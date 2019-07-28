@@ -249,7 +249,7 @@ Now, we can convert these into earth-centered cartesian coordinates, with the po
 If we multiply all these matrices, we get:
 \\[
 \begin{bmatrix}
-\cos{\omega}\cos{\Omega}-\cos{I}\sin{omega}\sin{\Omega} & -\cos{\Omega}\sin{\omega}-\cos{I}\cos{\omega}\sin{\Omega} & \sin{I}\sin{\Omega} \\\\\\\\
+\cos{\omega}\cos{\Omega}-\cos{I}\sin{\omega}\sin{\Omega} & -\cos{\Omega}\sin{\omega}-\cos{I}\cos{\omega}\sin{\Omega} & \sin{I}\sin{\Omega} \\\\\\\\
 \cos{I}\cos{\Omega}\sin{\omega} + \cos{\omega}\sin{\Omega} & \cos{I}\cos{\omega}\cos{\Omega}-\sin{\omega}\sin{\Omega} & -\cos{\Omega}\sin{I} \\\\\\\\
 \sin{I}\sin{\omega} & \cos{\omega}\sin{I} & \cos{I}
 \end{bmatrix}
