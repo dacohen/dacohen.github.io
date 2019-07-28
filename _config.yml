@@ -13,7 +13,7 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Everyday Obscura
+title: Technically Correct
 author: Daniel Cohen
 description: >- # this means to ignore newlines until "baseurl:"
   An exploration of diverse topics, from technology and science to travel and current issues
