@@ -253,6 +253,7 @@ DEPENDENCIES
   jekyll-sitemap
   jekyll-theme-clean-blog
   minima (~> 2.0)
+  rouge
   tzinfo (~> 1.2)
   tzinfo-data
   wdm (~> 0.1.0)

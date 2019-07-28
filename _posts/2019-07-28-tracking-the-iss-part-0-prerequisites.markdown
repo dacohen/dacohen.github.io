@@ -11,15 +11,15 @@ background: '/images/iss0.jpg'
 # Prelude
 I remember waiting for the ISS as night fell. Standing in a field just after sunset, waiting for that little fleck of light to come over the horizon. For a few moments as it passed overhead, the astronauts abord were no farther away than my grandparents, a few states over. But this proximity was fleeting; moving at over 17,000 mph, it would rapidly dim, and disappear over the horizon, daring me to meet it again another night.
 
-How to find it? There were, and are, quite a few excellent [sites](https://heavens-above.com) that will predict visible passes of the ISS and other satelites. But the process was always opaque and mysterious to me. You put in your current location, and it tells, to the nearest second, when it will appear. Without fail, it always does.
+How to find it? There were, and are, quite a few excellent [sites](https://heavens-above.com) that will predict visible passes of the ISS and other satellites. But the process was always opaque and mysterious to me. You put in your current location, and it tells, to the nearest second, when it will appear. Without fail, it always does.
 
-A few years ago, I set out to learn for myself how this process works, finding a dearth of quality explanations, decided to document it. This is the beginning of that journey. I hope you'll join me as we attempt to build a minimal satelite tracker.
+A few years ago, I set out to learn for myself how this process works, and finding a dearth of quality explanations, decided to document it. This is the beginning of that journey. I hope you'll join me as we attempt to build a minimal satellite tracker.
 
 # Technical Prerequisites
 I'll be writing this project in python, and posting code to a GitHub repository. I recommend you install Python locally, so you can follow along easily. If you're familiar with setting up a development environment, you can safely skip this portion. Otherwise, the easiest way to get up and running is to go install [Anaconda](https://www.anaconda.com/distribution/). Make sure you install **Python 3**. I'm going to assume a knowledge of very basic programming, or the ability to read python, which is fairly literate.
 
 # Orbital Mechanics Prerequisites
-There's quite a few concepts that are essential to understanding how to predict orbits. I'm going to touch on the most important ones, and provide links to Wikipedia and other references for more details. I'm also going to skip the derivations of several formulas, because other, much more skilled authors have done a better job than I can. However, I'm going to assume a knowledge of basic physics and linear algebra. If you're not comfortable with either, go check out Khan Academy and/or MIT OpenCourseWare. They're both great and have helped me a lot.
+There's quite a few concepts that are essential to understanding how to predict orbits. I'm going to touch on the most important ones, and provide links to Wikipedia and other references for more details. I'm also going to skip the derivations of several formulas, because other, much more skilled authors have done a better job than I can. However, I'm going to assume a knowledge of basic physics, derivative calculus, and linear algebra. If you're not comfortable with either, go check out Khan Academy and/or MIT OpenCourseWare. They're both great and have helped me a lot.
 
 ## Ellipses
 {% include image.html url="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Ellipse-def0.svg/621px-Ellipse-def0.svg.png" description="Image Credit: CC BY-SA 4.0 on Wikipedia by Ag2gaeh" %}
@@ -30,23 +30,23 @@ There's quite a few concepts that are essential to understanding how to predict 
 
 *Houston, we've had a problem!* Just kidding! Orbital anomalies aren't something to be worried about, they're simply a way to measure where in its orbit an object is. We measure orbital anomalies as an angle from the pericenter (also called a perigee in the case of Earth-centered systems), which is just the closest point of an orbit to its body. Most orbits are elliptical, which means they move closer and further from the object they're orbiting. This means that their orbital speed varies inversely, since they have to move faster so their centipetal force balances out the increased gravity. This is what keeps an object in orbit.
 
-Let's say a satelite takes 100 minutes to complete one orbit. If the orbit was perfectly circular, its speed would be constant, and after 50 minutes, it would have moved 180 degrees around its orbit. But if its elliptical, then it may have moved more or less than 180 degrees, since its speed fluctuates over the course of the orbit.
+Let's say a satellite takes 100 minutes to complete one orbit. If the orbit was perfectly circular, its speed would be constant, and after 50 minutes, it would have moved 180 degrees around its orbit. But if its elliptical, then it may have moved more or less than 180 degrees, since its speed fluctuates over the course of the orbit.
 
-It's also important to know that the orbital period of an elliptical orbit is determined only by the size of its semi-minor axis. This means that a circular orbit of the same radius will have the same orbital period. This lets us determine the Mean Anomaly of an orbit. If we imagine the orbit is circular, and the object moves at constant speed, we can easily determine its position, by multiplying speed and time.
+It's also important to know that the orbital period of an elliptical orbit is determined only by the size of its semi-major axis. This means that a circular orbit of the same radius will have the same orbital period. This lets us determine the Mean Anomaly of an orbit. If we imagine the orbit is circular, and the object moves at constant speed, we can easily determine its position, by multiplying speed and time.
 
-The actual position in orbit (with respect to the center of the imaginary circular orbit) is called the Eccentric Anomaly. This does not necessarily increase at a constant rate, as discussed above, but it lets us determine the true position of the satelite in orbit.
+The actual position in orbit (with respect to the center of the imaginary circular orbit) is called the Eccentric Anomaly. This does not necessarily increase at a constant rate, as discussed above, but it lets us determine the true position of the satellite in orbit.
 
 How do we find the Eccentric Anomaly from the Mean Anomaly? Read on!
 
 ## Kepler's Equation
 You may have heard of Johnannes Kepler and his three laws in school. We'll be using all of them in this project. For reference, they are:
 1. All planets move in elliptical orbits, with their attracting body at one focus
-2. A line that connects a satelite to its body sweeps out equal areas in equal times
-3. The square of the period of any satelite is proportional to the cube of its semimajor axis
+2. A line that connects a satellite to its body sweeps out equal areas in equal times
+3. The square of the period of any satellite is proportional to the cube of its semi-major axis
 
 For now, let's talk about the second law. From this law, and using a little geometry and trigonometry, we can derive the following equation:
 \\[ M = E - e \sin{E} \\]
-This is known as [Kepler's Equation](https://en.wikipedia.org/wiki/Kepler%27s_equation). \\(M\\) is the Mean Anomaly, \\(E\\) is the Eccentric Anomaly and \\(e\\) is the eccentricity. If you know the Mean Anomaly and eccentricity, then you can compute the Eccentric Anomaly and find out the real position of the satelite.
+This is known as [Kepler's Equation](https://en.wikipedia.org/wiki/Kepler%27s_equation). \\(M\\) is the Mean Anomaly, \\(E\\) is the Eccentric Anomaly and \\(e\\) is the eccentricity. If you know the Mean Anomaly and eccentricity, then you can compute the Eccentric Anomaly and find out the real position of the satellite.
 
 For more information on how this is derived, see *Fundamentals of Astrodynamics* by Bate and Mueller, Chapter 4. PDFs may be available online.
 
@@ -72,7 +72,7 @@ The Argument of periapsis is the angle from this ascending node to the point whe
 
 Finally, the epoch is a certain time at which the Keplerian elements were measured, and the true anomaly is the angle from the perigee at that exact moment.
 
-Together, these parameters fully define an orbit, and allow us to predict the position of a satelite at any point in the future.
+Together, these parameters fully define an orbit, and allow us to predict the position of a satellite at any point in the future.
 
 
 ## Astronomical Time: Julian Dates and Siderial Time
