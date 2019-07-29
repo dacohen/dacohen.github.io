@@ -9,7 +9,7 @@ background: '/images/iss1.jpg'
 <link rel="stylesheet" href="/css/monokai.css">
 {% include mathjax.html %}
 
-If you're just joining us now, and need a quick refresher on orbital mechanics, check out the preceeding post [here]({% post_url 2019-07-28-tracking-the-iss-part-0-prerequisites %}). 
+If you're just joining us now, and need a quick refresher on orbital mechanics, check out the preceding post [here]({% post_url 2019-07-28-tracking-the-iss-part-0-prerequisites %}). 
 
 I've posted the full code described below. It's available in a GitHub repository here:
 <https://github.com/dacohen/orbitalprediction/tree/master/part1>
@@ -73,7 +73,7 @@ Each of these fields has a specific meaning, fully explained [here](https://en.w
 	</tbody>
 </table>
 
-Note: The TLE elements above are designed to be used with an [SGP](https://en.wikipedia.org/wiki/Simplified_perturbations_models) model. As such, the predictions produced below will have lower accuracy because they don't take into account factors such as the spheriod shape of the earth. If you're planning an ISS rendezvous, don't use the results from the model we're about to create. 
+Note: The TLE elements above are designed to be used with an [SGP](https://en.wikipedia.org/wiki/Simplified_perturbations_models) model. As such, the predictions produced below will have lower accuracy because they don't take into account factors such as the spheroid shape of the earth. If you're planning an ISS rendezvous, don't use the results from the model we're about to create. 
 
 
 # Helper Methods
@@ -93,7 +93,7 @@ def datetime_from_epoch(epoch):
 	return date
 ```
 
-Next, let's write some functions to compute the Julian Date and Siderial time, we'll need these later:
+Next, let's write some functions to compute the Julian Date and Sidereal time, we'll need these later:
 ```python
 def julian_date(time):
 	UT = (time.minute / 60.0) + time.hour
@@ -204,13 +204,13 @@ I threw in a modulus, so we can make sure the Mean Anomaly is always between 0 a
 Now that we have the Mean Anomaly of our satellite at the prediction time, we just have to solve for the Eccentric Anomaly using Kepler's Equation. Unfortunately, algebra won't help us much. The sine is a transcendental function, so there's no way to solve for E algebraically. But don't worry, there's another way.
 
 ## Newton's Method
-We can use [Newton's Method](https://en.wikipedia.org/wiki/Newton%27s_method) to find the root of Kepler's equation. This should be quite fast since the ISS has a nearly circular orbit and the Eccentic and Mean anomalies should be almost equal. Since Newton's method finds the zeros of a function, we need to rewrite Kepler's equation so it's equal to zero:
+We can use [Newton's Method](https://en.wikipedia.org/wiki/Newton%27s_method) to find the root of Kepler's equation. This should be quite fast since the ISS has a nearly circular orbit and the Eccentric and Mean anomalies should be almost equal. Since Newton's method finds the zeros of a function, we need to rewrite Kepler's equation so it's equal to zero:
 \\[f(E) = E - e \sin(E) - M = 0\\]
 
 Let's also compute the deriviative of \\(f(E)\\):
 \\[f'(E) = 1 - e \cos(E)\\]
 
-Now, starting with the Mean Anomaly M, we can iteratively refine our estimate of the Eccentic Anomaly E:
+Now, starting with the Mean Anomaly M, we can iteratively refine our estimate of the Eccentric Anomaly E:
 \\[E_{i+1} = E_i - \frac{f(E_i)}{f'(E_i)}\\]
 
 When the fractional part gets suitably small, we're confident we've found the root, and can stop. In python, that looks like this:
@@ -237,7 +237,7 @@ P = semi_major_meters * (math.cos(E) - eccentricity)
 Q = semi_minor_meters * math.sin(E)
 ```
 
-Now, we can convert these into earth-centered cartesian coordinates, with the positive x-axis pointing at the celestial origin. To do this, we need to do three rotations. First we need to rotate around the z-axis by the RAAN, so the ascending node is on the x-axis. Then we need to rotate around the x-axis by the inclination, so the orbit is in the correct plane relative to the equator. Finally, we need to rotate around the z-axis again by the Argument of perigee, so the perigee is in the right position. As an equation, that looks like this:
+Now, we can convert these into earth-centered Cartesian coordinates, with the positive x-axis pointing at the celestial origin. To do this, we need to do three rotations. First we need to rotate around the z-axis by the RAAN, so the ascending node is on the x-axis. Then we need to rotate around the x-axis by the inclination, so the orbit is in the correct plane relative to the equator. Finally, we need to rotate around the z-axis again by the Argument of perigee, so the perigee is in the right position. As an equation, that looks like this:
 \\[\vec{\mathbf{r}} = R_z{(-\Omega)}R_x{(-I)}R_z{(-\omega)}\vec{\mathbf{r'}}\\]
 
 \\(R_z\\) and \\(R_x\\) both represent rotation matrices, so written out fully, we get:
@@ -258,7 +258,7 @@ If we multiply all these matrices, we get:
 
 In python, this looks like the following:
 ```python
-## ROTATION into siderial frame
+## ROTATION into sidereal frame
 x = (math.cos(arg_of_perigee_rad) * math.cos(raan_rad) - math.sin(arg_of_perigee_rad) * math.sin(raan_rad) * math.cos(inclination_rad)) * P + \
 	(-math.sin(arg_of_perigee_rad) * math.cos(raan_rad) - math.cos(arg_of_perigee_rad) * math.sin(raan_rad) * math.cos(inclination_rad)) * Q
 
@@ -271,7 +271,7 @@ z = (math.sin(arg_of_perigee_rad) * math.sin(inclination_rad)) * P + (math.cos(a
 ## Spherical Coordinates
 {% include image.html url="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/3D_Spherical.svg/649px-3D_Spherical.svg.png" description="Spherical coordinate system" %}
 
-The last step is to convert the cartestian coordinates into spherical coordinates. The formulas for this transformation are:
+The last step is to convert the Cartesian coordinates into spherical coordinates. The formulas for this transformation are:
 \\[r = \sqrt{x^2 + y^2 + z^2}\\]
 \\[\theta = \arccos{\frac{z}{r}}\\]
 \\[\phi = \arctan{\frac{y}{x}}\\]
@@ -285,14 +285,14 @@ dec_rad = math.acos(z / r)
 
 We use the atan2 function so we don't have to worry about setting the sign correctly based on the quadrant.
 
-Now we determine the siderial time at Greenwich, which is at zero degrees longitude, using the helper function we wrote before:
+Now we determine the sidereal time at Greenwich, which is at zero degrees longitude, using the helper function we wrote before:
 ```python
 gmst_rad = utils.greenwich_siderial_time(time_to_predict) * (2 * math.pi / 24)
 ```
 
-Siderial time is usually given in hours, so we convert from hours to radians with a simple conversion factor.
+Sidereal time is usually given in hours, so we convert from hours to radians with a simple conversion factor.
 
-To get real longitude, we subtract the local siderial time from the right ascension. You'll also notice in the diagram above that the altitude is defined as the angle between the vector and the north pole. However, latitude is centered at the equator, and ranges from +90 to -90 degrees. Performing both of these conversions is simple, as is converting back to degrees:
+To get real longitude, we subtract the local sidereal time from the right ascension. You'll also notice in the diagram above that the altitude is defined as the angle between the vector and the north pole. However, latitude is centered at the equator, and ranges from +90 to -90 degrees. Performing both of these conversions is simple, as is converting back to degrees:
 
 ```python
 lng_rad = -gmst_rad + ra_rad
