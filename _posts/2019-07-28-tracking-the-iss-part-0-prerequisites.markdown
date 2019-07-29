@@ -9,11 +9,11 @@ background: '/images/iss0.jpg'
 {% include mathjax.html %}
 
 # Prelude
-I remember waiting for the ISS as night fell. Standing next to a lake just after sunset, waiting for that little fleck of light to come over the horizon. For a few moments as it passed overhead, the astronauts aboard were no farther away than my grandparents, a few states over. But this proximity was fleeting; moving at over 17,000 mph, it would rapidly dim, and disappear over the horizon, daring me to meet it again another night.
+I remember waiting for the ISS as night fell. Standing next to a lake just after sunset, waiting for that little fleck of light to come over the horizon. For a few moments as it passed overhead, the astronauts aboard were no farther away than my grandparents, a few states over. But this proximity was fleeting; moving at over 17,000 mph, it rapidly dimmed, and disappeared over the horizon, daring me to meet it again another night.
 
-How to find it? There were, and are, quite a few excellent [sites](https://heavens-above.com) that will predict visible passes of the ISS and other satellites. But the process was always opaque and mysterious to me. You put in your current location, and it tells, to the nearest second, when it will appear. Without fail, it always does.
+How to find it? There were, and are, quite a few excellent [sites](https://heavens-above.com) that will predict visible passes of the ISS and other satellites. But the process was always opaque and mysterious to me. You put in your current location, and it tells you, to the nearest second, when it will appear, and without fail, it always does.
 
-A few years ago, I set out to learn for myself how this process works, and finding a dearth of quality explanations, decided to document it. This is the beginning of that journey. I hope you'll join me as we attempt to build a minimal satellite tracker.
+A few years ago, I set out to learn for myself how this process works, and finding a lack of quality explanations, decided to document it myself. This is the beginning of that journey. I hope you'll join me as we attempt to build a minimal satellite tracker.
 
 # Technical Prerequisites
 I'll be writing this project in python, and posting code to a GitHub repository. I recommend you install Python locally, so you can follow along easily. If you're familiar with setting up a development environment, you can safely skip this portion. Otherwise, the easiest way to get up and running is to go install [Anaconda](https://www.anaconda.com/distribution/). Make sure you install **Python 3**. I'm going to assume a knowledge of very basic programming, or the ability to read python.
